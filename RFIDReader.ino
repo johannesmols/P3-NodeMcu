@@ -15,8 +15,8 @@ void setupReader()
   rfidSetupCompleted = true;
 }
 
-// Read a RFID tag and return it's UID
-void readTag(byte toReturn[])
+// Read a single RFID tag and return it's UID
+vector<byte> readTag()
 {
   // Run setup if it hasn't been run yet
   if (!rfidSetupCompleted)
@@ -24,43 +24,73 @@ void readTag(byte toReturn[])
     setupReader();
   }
 
+  vector<byte> uid; // Create vector that will store the UID
+
   if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) // proceed if a new tag has been found
   {
-    #if LOGGING
-    Serial.print("Found UID: ");
-    #endif
-
-    if (mfrc522.uid.size == sizeof(toReturn) / sizeof(toReturn[0])) // only continue if the scanned tag size is as large as a predefined empty tag
+    for (byte i = 0; i < mfrc522.uid.size; i++) // loop through the scanned tag and write UID to vector
     {
-      for (byte i = 0; i < mfrc522.uid.size; i++) // loop through the scanned tag and write UID to array
+      uid.push_back(mfrc522.uid.uidByte[i]); // Add byte to vector
+    }
+
+    mfrc522.PICC_HaltA(); // Put the read RFID chip to a halt to avoid reading it twice and allowing other chips to be read
+  }
+
+  return uid;
+}
+
+// Scan for RFID tags in proximity and return a vector of UID's of the found RFID tags
+vector<String> scanForTags(int timeoutInSeconds)
+{
+  vector<String> foundTags;
+  
+  unsigned long timeSinceLastScannedTag = millis();
+  while (millis() - timeSinceLastScannedTag < timeoutInSeconds * 1000) // Scan until timeout is reached
+  {
+    vector<byte> newUid = readTag();
+    if (newUid.size() > 0)
+    {
+      // Convert byte vector to String
+      String tmpUid;
+      for (byte tmp : newUid)
       {
-        toReturn[i] = mfrc522.uid.uidByte[i];
+        tmpUid += tmp < 0x10 ? "0" + String(tmp, HEX) : String(tmp, HEX); // Write bytes in 2-char pairs as hexadecimal numbers
+      }
+      tmpUid.toUpperCase();
+
+      // Determine if the tag has already been scanned
+      boolean duplicate = false;
+      for (String tag : foundTags)
+      {
+        if (tag == tmpUid)
+        {
+          duplicate = true;
+          break;
+        }
+      }
+
+      if (!duplicate)
+      {
+        foundTags.push_back(tmpUid); // Add tag to list of found tags if it is no duplicate
 
         #if LOGGING
-        Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
-        Serial.print(mfrc522.uid.uidByte[i], HEX);
+        Serial.println("Found Tag: " + tmpUid);
         #endif
       }
-
       #if LOGGING
-      Serial.println();
+      else
+      {
+        Serial.println("Tag " + tmpUid + " has already been scanned.");
+      }
       #endif
 
-      mfrc522.PICC_HaltA(); // Put the read RFID chip to a halt to avoid reading it twice and allowing other chips to be read
+      timeSinceLastScannedTag = millis(); // Reset timeout timer
     }
-    else
-    {
-      for (byte i = 0; i < sizeof(toReturn) / sizeof(toReturn[0]); i++)
-      {
-        toReturn[i] = 0; // Change every item in the array to zero to indicate that no tag was found
-      }
-    }
+
+    delay(50); // Small delay to avoid taking all processing power from the WiFi processes
   }
-  else
-  {
-    for (byte i = 0; i < sizeof(toReturn) / sizeof(toReturn[0]); i++)
-    {
-      toReturn[i] = 0; // Change every item in the array to zero to indicate that no tag was found
-    }
-  }
+  
+  Serial.println("Time ran out!");
+
+  return foundTags;
 }
