@@ -1,5 +1,10 @@
-#include <SPI.h>
-#include <MFRC522.h>
+/**
+ * Author:    Johannes Mols
+ * Created:   28.09.2018
+ **/
+
+#include <SPI.h> // https://www.arduino.cc/en/Reference/SPI
+#include <MFRC522.h> // https://github.com/miguelbalboa/rfid
 
 #define SS_PIN D4   // SPI - Slave Select Pin
 #define RST_PIN D2  // SPI - Reset Pin - not actually connected
@@ -87,10 +92,10 @@ vector<String> scanForTags(int timeoutInSeconds)
       timeSinceLastScannedTag = millis(); // Reset timeout timer
     }
 
-    delay(50); // Small delay to avoid taking all processing power from the WiFi processes
+    delay(PAUSE_TIME_MS); // Small delay to avoid taking all processing power from the WiFi processes
   }
   
-  Serial.println("Time ran out!");
+  Serial.println("RFID Scan Timeout");
 
   return foundTags;
 }
