@@ -50,15 +50,17 @@ void readTag(byte toReturn[])
     }
     else
     {
-      return;
+      for (byte i = 0; i < sizeof(toReturn) / sizeof(toReturn[0]); i++)
+      {
+        toReturn[i] = 0; // Change every item in the array to zero to indicate that no tag was found
+      }
     }
   }
   else
   {
     for (byte i = 0; i < sizeof(toReturn) / sizeof(toReturn[0]); i++)
     {
-      // Change every item in the array to zero to indicate that no tag was found
-      toReturn[i] = 0;
+      toReturn[i] = 0; // Change every item in the array to zero to indicate that no tag was found
     }
   }
 }
