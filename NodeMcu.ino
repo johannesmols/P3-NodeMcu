@@ -4,6 +4,7 @@
  **/
 
 #define LOGGING true          // Enable or Disable output via Serial
+#define BUZZER true           // Enable or Disable sounds of buzzer when scanning tags
 #define PAUSE_TIME_MS 50      // Pause time in milliseconds that processes like the RFID Reader or IR Scanner should take between loops to save resources
 #define SCAN_TIMEOUT_S 30     // Time in seconds for timeout after the last scanned tag
 
@@ -48,6 +49,8 @@ vector<String> scanForTags(int timeoutInSeconds);
 // IRReceiver.ino
 void setupIRReader();
 IR_CODE listenToIR();
+// Buzzer.ino
+void buzzer(unsigned int frequency, unsigned long duration);
 /* ----- FUNCTION PROTOTYPES END ----- */
 
 void setup() 
@@ -65,7 +68,7 @@ void loop()
       #if LOGGING
       Serial.println("Starting scan...");
       #endif
-      scanForTags(SCAN_TIMEOUT_S);
+      vector<String> results = scanForTags(SCAN_TIMEOUT_S);
       break;
   }
 }

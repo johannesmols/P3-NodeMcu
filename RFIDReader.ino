@@ -81,11 +81,19 @@ vector<String> scanForTags(int timeoutInSeconds)
         #if LOGGING
         Serial.println("Found Tag: " + tmpUid);
         #endif
+
+        #if BUZZER
+        buzzer(250, 250); // Play a short, high pitched sound to show acceptance
+        #endif
       }
       #if LOGGING
       else
       {
         Serial.println("Tag " + tmpUid + " has already been scanned.");
+
+        #if BUZZER
+        buzzer(100, 250); // Play a short, low pitched sound to show declination
+        #endif
       }
       #endif
 
