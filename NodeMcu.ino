@@ -3,10 +3,21 @@
  * Created:   28.09.2018
  **/
 
+ /**
+  * Color Codes
+  * -----------
+  * Yellow = Initializing
+  * Red = Error
+  * Green = Ready, waiting for input
+  * Blue = Scanning mode (RFID tags)
+  * Purple = Adding mode (RFID tags)
+  */
+
 #define LOGGING true          // Enable or Disable output via Serial
 #define BUZZER true           // Enable or Disable sounds of buzzer when scanning tags
 #define PAUSE_TIME_MS 50      // Pause time in milliseconds that processes like the RFID Reader or IR Scanner should take between loops to save resources
-#define SCAN_TIMEOUT_S 30     // Time in seconds for timeout after the last scanned tag
+#define SCAN_TIMEOUT_S 15     // Time in seconds for timeout after the last scanned tag
+#define LED_FADING_TIME 10    // Incremental fading time steps in milliseconds
 
 using namespace std;
 
@@ -38,6 +49,14 @@ enum IR_CODE
   UNKNOWN_BUTTON = 0x0
 };
 
+// LED Colors
+const unsigned char RED[] { 255, 0, 0 };
+const unsigned char GREEN[] { 0, 255, 0 };
+const unsigned char BLUE[] { 0, 0, 255 };
+const unsigned char YELLOW[] { 255, 255, 0 };
+const unsigned char PURPLE[] { 127, 0, 255 };
+const unsigned char ORANGE[] { 255, 127, 0 };
+
 /* ----- FUNCTION PROTOTYPES ----- */
 // NodeMcu.ino
 void setup();
@@ -51,12 +70,21 @@ void setupIRReader();
 IR_CODE listenToIR();
 // Buzzer.ino
 void buzzer(unsigned int frequency, unsigned long duration);
+// StatusLED.ino
+void setupLED();
+void changeColor(unsigned char color[3], boolean fade);
+void changeColor(unsigned char red, unsigned char green, unsigned char blue, boolean fade);
 /* ----- FUNCTION PROTOTYPES END ----- */
 
 void setup() 
 {
+  changeColor(YELLOW, false); // initalizing color
   Serial.begin(9600);
   while (!Serial) { } // Wait for serial connection to be established
+
+  // WiFi initialization
+
+  changeColor(GREEN, true); // initialization complete
 }
 
 void loop() 

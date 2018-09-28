@@ -47,6 +47,9 @@ vector<byte> readTag()
 // Scan for RFID tags in proximity and return a vector of UID's of the found RFID tags
 vector<String> scanForTags(int timeoutInSeconds)
 {
+  // Change LED Status color
+  changeColor(BLUE, true);
+  
   vector<String> foundTags;
   
   unsigned long timeSinceLastScannedTag = millis();
@@ -104,6 +107,9 @@ vector<String> scanForTags(int timeoutInSeconds)
   }
   
   Serial.println("RFID Scan Timeout");
+
+  // Change LED Status color back to normal
+  changeColor(GREEN, true);
 
   return foundTags;
 }
