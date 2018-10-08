@@ -41,6 +41,7 @@ void setupWiFi()
 }
 
 // Discover the server via a UDP broadcast, and store it's IP and Port in the local network in field variables for later use
+// IMPORTANT - For the server to work, the Linux Firewall has to be disabled!!!
 void discoverServer()
 {
   changeColor(PURPLE, false); // change the color of the RGB status LED to signal that the program is searching for the server
