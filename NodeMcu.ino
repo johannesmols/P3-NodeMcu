@@ -1,3 +1,4 @@
+
 /**
  * Author:    Johannes Mols
  * Created:   28.09.2018
@@ -13,11 +14,17 @@
   * Purple = Adding mode (RFID tags)
   */
 
+#include <SPI.h> // https://www.arduino.cc/en/Reference/SPI
+#include <MFRC522.h> // https://github.com/miguelbalboa/rfid
+
 #define LOGGING true          // Enable or Disable output via Serial
 #define BUZZER true           // Enable or Disable sounds of buzzer when scanning tags
 #define PAUSE_TIME_MS 50      // Pause time in milliseconds that processes like the RFID Reader or IR Scanner should take between loops to save resources
 #define SCAN_TIMEOUT_S 15     // Time in seconds for timeout after the last scanned tag
 #define LED_FADING_TIME 5    // Incremental fading time steps in milliseconds
+
+#define SS_PIN D8   // SPI - Slave Select Pin
+#define RST_PIN D2  // SPI - Reset Pin - not actually connected
 
 using namespace std;
 
@@ -57,6 +64,11 @@ const unsigned char YELLOW[] { 255, 255, 0 };
 const unsigned char PURPLE[] { 127, 0, 255 };
 const unsigned char ORANGE[] { 255, 127, 0 };
 
+// Defining MFRC522 here, because there was an issue with the RGB LED displaying the wrong color
+// during the scan, when running the scan for the first time. Initializing the MFRC522 at the
+// start of the program instead of when the first scan is started, fixes the issue.
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+
 /* ----- FUNCTION PROTOTYPES ----- */
 // NodeMcu.ino
 void setup();
@@ -84,11 +96,14 @@ void setup()
   changeColor(YELLOW, false); // initalizing color
   Serial.begin(115200);
   while (!Serial) { } // Wait for serial connection to be established
+
+  SPI.begin(); // Initializing Serial Peripheral Interface to communicate with MFRC522
+  mfrc522.PCD_Init(); // Initialize MFRC522
   
   setupWiFi(); // WiFi initialization, blocks until connected
-  discoverServer();
+  //discoverServer();
 
-  changeColor(GREEN, true); // initialization complete
+  changeColor(GREEN, false); // initialization complete
 }
 
 void loop() 

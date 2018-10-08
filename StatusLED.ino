@@ -3,7 +3,7 @@
  * Created:   28.09.2018
  **/
 
-#define LED_BLUE D8
+#define LED_BLUE D4
 #define LED_GREEN D3
 #define LED_RED D2
 

@@ -3,32 +3,9 @@
  * Created:   28.09.2018
  **/
 
-#include <SPI.h> // https://www.arduino.cc/en/Reference/SPI
-#include <MFRC522.h> // https://github.com/miguelbalboa/rfid
-
-#define SS_PIN D4   // SPI - Slave Select Pin
-#define RST_PIN D2  // SPI - Reset Pin - not actually connected
-
-MFRC522 mfrc522(SS_PIN, RST_PIN);
-
-// Initial setup for SPI and MFRC522
-bool rfidSetupCompleted = false;
-void setupReader()
-{
-  SPI.begin();
-  mfrc522.PCD_Init();
-  rfidSetupCompleted = true;
-}
-
 // Read a single RFID tag and return it's UID
 vector<byte> readTag()
 {
-  // Run setup if it hasn't been run yet
-  if (!rfidSetupCompleted)
-  {
-    setupReader();
-  }
-
   vector<byte> uid; // Create vector that will store the UID
 
   if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) // proceed if a new tag has been found
@@ -48,7 +25,7 @@ vector<byte> readTag()
 vector<String> scanForTags(int timeoutInSeconds)
 {
   // Change LED Status color
-  changeColor(BLUE, true);
+  changeColor(BLUE, false);
   
   vector<String> foundTags;
   
@@ -106,10 +83,10 @@ vector<String> scanForTags(int timeoutInSeconds)
     delay(PAUSE_TIME_MS); // Small delay to avoid taking all processing power from the WiFi processes
   }
   
-  Serial.println("RFID Scan Timeout");
+  Serial.println("RFID Scan Complete");
 
   // Change LED Status color back to normal
-  changeColor(GREEN, true);
+  changeColor(GREEN, false);
 
   return foundTags;
 }
