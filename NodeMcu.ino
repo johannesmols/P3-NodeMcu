@@ -1,4 +1,3 @@
-
 /**
  * Author:    Johannes Mols
  * Created:   28.09.2018
@@ -57,12 +56,11 @@ enum IR_CODE
 };
 
 // LED Colors
-const unsigned char RED[] { 255, 0, 0 };
-const unsigned char GREEN[] { 0, 255, 0 };
-const unsigned char BLUE[] { 0, 0, 255 };
-const unsigned char YELLOW[] { 255, 255, 0 };
-const unsigned char PURPLE[] { 127, 0, 255 };
-const unsigned char ORANGE[] { 255, 127, 0 };
+const unsigned char RED[] { 255, 0, 0 };        // Error
+const unsigned char GREEN[] { 0, 255, 0 };      // System ready, waiting for input
+const unsigned char BLUE[] { 0, 0, 255 };       // Scanning RFID tags
+const unsigned char YELLOW[] { 255, 255, 0 };   // Setting up system
+const unsigned char PURPLE[] { 127, 0, 255 };   // Searching for server via UDP Broadcast
 
 // Defining MFRC522 here, because there was an issue with the RGB LED displaying the wrong color
 // during the scan, when running the scan for the first time. Initializing the MFRC522 at the
@@ -101,7 +99,7 @@ void setup()
   mfrc522.PCD_Init(); // Initialize MFRC522
   
   setupWiFi(); // WiFi initialization, blocks until connected
-  //discoverServer();
+  discoverServer(); // Discover server on the local network, blocks until found
 
   changeColor(GREEN, false); // initialization complete
 }
