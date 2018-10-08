@@ -17,7 +17,7 @@
 #define BUZZER true           // Enable or Disable sounds of buzzer when scanning tags
 #define PAUSE_TIME_MS 50      // Pause time in milliseconds that processes like the RFID Reader or IR Scanner should take between loops to save resources
 #define SCAN_TIMEOUT_S 15     // Time in seconds for timeout after the last scanned tag
-#define LED_FADING_TIME 10    // Incremental fading time steps in milliseconds
+#define LED_FADING_TIME 5    // Incremental fading time steps in milliseconds
 
 using namespace std;
 
@@ -74,15 +74,17 @@ void buzzer(unsigned int frequency, unsigned long duration);
 void setupLED();
 void changeColor(unsigned char color[3], boolean fade);
 void changeColor(unsigned char red, unsigned char green, unsigned char blue, boolean fade);
+// WiFi.ino
+void setupWiFi();
 /* ----- FUNCTION PROTOTYPES END ----- */
 
 void setup() 
 {
   changeColor(YELLOW, false); // initalizing color
-  Serial.begin(9600);
+  Serial.begin(115200);
   while (!Serial) { } // Wait for serial connection to be established
-
-  // WiFi initialization
+  
+  setupWiFi(); // WiFi initialization, blocks until connected
 
   changeColor(GREEN, true); // initialization complete
 }
