@@ -76,6 +76,7 @@ void changeColor(unsigned char color[3], boolean fade);
 void changeColor(unsigned char red, unsigned char green, unsigned char blue, boolean fade);
 // WiFi.ino
 void setupWiFi();
+void discoverServer();
 /* ----- FUNCTION PROTOTYPES END ----- */
 
 void setup() 
@@ -85,6 +86,7 @@ void setup()
   while (!Serial) { } // Wait for serial connection to be established
   
   setupWiFi(); // WiFi initialization, blocks until connected
+  discoverServer();
 
   changeColor(GREEN, true); // initialization complete
 }
