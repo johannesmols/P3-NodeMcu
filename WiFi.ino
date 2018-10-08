@@ -92,6 +92,6 @@ void discoverServer()
       }
     }
     
-    delay(PAUSE_TIME_MS);
+    delay(250); // Pause a few milliseconds to avoid flooding the network
   }
 }
