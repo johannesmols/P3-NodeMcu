@@ -61,32 +61,24 @@ const unsigned char GREEN[] { 0, 255, 0 };      // System ready, waiting for inp
 const unsigned char BLUE[] { 0, 0, 255 };       // Scanning RFID tags
 const unsigned char YELLOW[] { 255, 255, 0 };   // Setting up system
 const unsigned char PURPLE[] { 127, 0, 255 };   // Searching for server via UDP Broadcast
+const unsigned char PINK[] { 255, 0, 255 };     // Registering device with server
 
 // Defining MFRC522 here, because there was an issue with the RGB LED displaying the wrong color
 // during the scan, when running the scan for the first time. Initializing the MFRC522 at the
 // start of the program instead of when the first scan is started, fixes the issue.
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
-/* ----- FUNCTION PROTOTYPES ----- */
-// NodeMcu.ino
-void setup();
-void loop();
+/* ----- FUNCTION PROTOTYPES (only add when there is an error without it) ----- */
 // RFIDReader.ino
-void setupReader();
-vector<byte> readTag();
 vector<String> scanForTags(int timeoutInSeconds);
 // IRReceiver.ino
-void setupIRReader();
 IR_CODE listenToIR();
-// Buzzer.ino
-void buzzer(unsigned int frequency, unsigned long duration);
 // StatusLED.ino
-void setupLED();
 void changeColor(unsigned char color[3], boolean fade);
 void changeColor(unsigned char red, unsigned char green, unsigned char blue, boolean fade);
 // WiFi.ino
 void setupWiFi();
-void discoverServer();
+//void discoverServer();
 /* ----- FUNCTION PROTOTYPES END ----- */
 
 void setup() 
@@ -100,6 +92,7 @@ void setup()
   
   setupWiFi(); // WiFi initialization, blocks until connected
   discoverServer(); // Discover server on the local network, blocks until found
+  registerDevice("NodeMcu" + (String) millis()); // Append the time in milliseconds since boot to the name to have a differnt name at every boot
 
   changeColor(GREEN, false); // initialization complete
 }
