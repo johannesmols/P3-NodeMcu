@@ -3,6 +3,7 @@
 <a href="https://discord.gg/JfGRgpg"><img src="https://discordapp.com/api/guilds/394918256734896128/embed.png" alt="" /></a>
 
 The NodeMcu/ESP8266 code for a project called "Smart Door" at Aalborg University in Copenhagen, Denmark.
+
 The system is capable of reading RFID tags when the user is leaving his house, and sending a notification to the user's phone, if he forgot something at home.
 
 ### Components
