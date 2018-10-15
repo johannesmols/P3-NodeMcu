@@ -1,7 +1,7 @@
 #include <ESP8266WiFi.h>        // WiFi library
 #include <WiFiUdp.h>            // UPD functionality
 #include <ESP8266HTTPClient.h>  // HTTP Client
-#include <ArduinoJson.h>        // JSON Library
+#include <ArduinoJson.h>        // JSON Library - use version 5.13.2, version 6 has code breaking changes
 
 // Wi-Fi Credentials
 const char WIFI_SSID[] = "network";

@@ -29,37 +29,11 @@ IR_CODE listenToIR()
     setupIRReader();
   }
 
-  IR_CODE returnCode; // Pressed button that will be returned
+  IR_CODE returnCode = UNKNOWN_BUTTON; // Pressed button that will be returned, default to unknown
   
   if (irrecv.decode(&results)) // Decide which button address the decodede result refers to
   {
-    switch (results.value)
-    {
-      case POWER:         returnCode = POWER; break;
-      case FUNC_STOP:     returnCode = FUNC_STOP; break;
-      case VOL_PLUS:      returnCode = VOL_PLUS; break;
-      case FAST_BACK:     returnCode = FAST_BACK; break;
-      case PAUSE:         returnCode = PAUSE; break;
-      case FAST_FORWARD:  returnCode = FAST_FORWARD; break;
-      case DOWN:          returnCode = DOWN; break;
-      case VOL_MIN:       returnCode = VOL_MIN; break;
-      case UP:            returnCode = UP; break;
-      case EQ:            returnCode = EQ; break;
-      case ST_REPT:       returnCode = ST_REPT; break;
-      case NUM_0:         returnCode = NUM_0; break;
-      case NUM_1:         returnCode = NUM_1; break;
-      case NUM_2:         returnCode = NUM_2; break;
-      case NUM_3:         returnCode = NUM_3; break;
-      case NUM_4:         returnCode = NUM_4; break;
-      case NUM_5:         returnCode = NUM_5; break;
-      case NUM_6:         returnCode = NUM_6; break;
-      case NUM_7:         returnCode = NUM_7; break;
-      case NUM_8:         returnCode = NUM_8; break;
-      case NUM_9:         returnCode = NUM_9; break;
-      case REPETITION:    returnCode = REPETITION; break;
-      default:            returnCode = UNKNOWN_BUTTON; break;
-    }
-    
+    returnCode = (IR_CODE) results.value;
     irrecv.resume();  // Receive the next value
   }
 
