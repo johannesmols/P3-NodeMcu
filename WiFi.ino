@@ -1,3 +1,8 @@
+/**
+ * Author:    Johannes Mols
+ * Created:   08.10.2018
+ **/
+
 #include <ESP8266WiFi.h>        // WiFi library
 #include <WiFiUdp.h>            // UPD functionality
 #include <ESP8266HTTPClient.h>  // HTTP Client
@@ -105,11 +110,6 @@ void discoverServer()
 void registerDevice(String deviceName)
 {
   changeColor(PINK, false); // change the color of the RGB status LED to signal that the device is being registered with the server
-  
-  // Testing
-  //serverIp = IPAddress(192,168,43,51);
-  //serverPort = 8080;
-  // Testing
 
   String host = "http://" + (String) serverIp.toString().c_str() + ":" + (String) serverPort + "/api/register";
 
