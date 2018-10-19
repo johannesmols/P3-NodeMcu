@@ -107,7 +107,7 @@ void discoverServer()
 }
 
 // Use the server API to register the device and store the assigned ID
-void registerDevice(String deviceName)
+void registerDevice()
 {
   changeColor(PINK, false); // change the color of the RGB status LED to signal that the device is being registered with the server
 
@@ -125,7 +125,7 @@ void registerDevice(String deviceName)
   // Prepare POST request by adding a message in JSON format
   vector<String> types, values;
   types.push_back("device_type");
-  values.push_back(deviceName);
+  values.push_back(WiFi.macAddress());
 
   // Post request to the server and fetch response
   int httpCode = http.POST(convertValuesToJson(types, values));
@@ -151,7 +151,7 @@ String convertValuesToJson(vector<String> types, vector<String> values)
   }
 
   int numberOfElements = types.size() + values.size();
-  const size_t bufferSize = JSON_ARRAY_SIZE(numberOfElements); // size of dynamic buffer
+  const size_t bufferSize = JSON_ARRAY_SIZE(numberOfElements) + 128; // size of dynamic buffer
   DynamicJsonBuffer jsonBuffer(bufferSize);
 
   JsonObject& root = jsonBuffer.createObject();

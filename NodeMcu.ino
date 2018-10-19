@@ -92,13 +92,16 @@ void setup()
   
   setupWiFi(); // WiFi initialization, blocks until connected
   discoverServer(); // Discover server on the local network, blocks until found
-  registerDevice("NodeMcu" + (String) millis()); // Append the time in milliseconds since boot to the name to have a differnt name at every boot
+  registerDevice(); // Register the device with the server
 
   changeColor(GREEN, false); // initialization complete
 }
 
 void loop() 
 {
+  // Listen to incoming network packets (e.g. commands to scan, ...)
+  
+  // Listen to commands sent by an IR remote directly on the device's IR sensor
   IR_CODE pressedButton = listenToIR();
   switch (pressedButton)
   {
