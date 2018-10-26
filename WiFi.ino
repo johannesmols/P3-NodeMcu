@@ -4,11 +4,14 @@
  **/
 
 #include <ESP8266WiFi.h>        // WiFi library
+#include <DNSServer.h>          // DNS Server
+#include <ESP8266WebServer.h>   // Web Server
+#include <WiFiManager.h>        // Prompt User to Connect to WiFi: https://github.com/tzapu/WiFiManager
 #include <WiFiUdp.h>            // UPD functionality
 #include <ESP8266HTTPClient.h>  // HTTP Client
 #include <ArduinoJson.h>        // JSON Library - use version 5.13.2, version 6 has code breaking changes
 
-// Wi-Fi Credentials
+// Wi-Fi Credentials for static connection
 const char WIFI_SSID[] = "network";
 const char WIFI_PASSWORD[] = "password";
 
@@ -26,24 +29,37 @@ unsigned int serverPort = localUdpPort; // Use local port as default in case the
 // Server info - info returned by the server API
 String deviceId; // Assigned device ID by the server, used when interacting with the API
 
-void setupWiFi()
+/*
+ * Set up a soft access point for clients to connect (via phone, laptop, ...)
+ * After connecting, the user will be prompted to select the WiFi network
+ * that he wants to use with the NodeMcu. He will be asked for the password.
+ * The access point will then be closed and the NodeMcu connects to the selected WiFi
+ */
+void setupWiFiDynamic(bool resetSettings)
 {
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  changeColor(YELLOW, false); // indicate that it is working
   
-  #if LOGGING
-  Serial.println("Connecting to network: " + (String) WIFI_SSID);
-  #endif
-  
-  while (WiFi.status() != WL_CONNECTED)
+  WiFiManager wifiManager;
+
+  if (resetSettings)
   {
-    delay(100);
+    wifiManager.resetSettings();
   }
+  
+  wifiManager.autoConnect("Smart Door"); // Create an access point with this SSID, the library handles the rest
 
   #if LOGGING
-  Serial.print("Connected to network, Local IP Address: ");
-  Serial.println(WiFi.localIP());
+  Serial.println("Connected to network");
   #endif
-  
+
+  startUdpListener();
+
+  changeColor(GREEN, false); // indicate that WiFi setup was completed successfully
+}
+
+// Start listening to UDP traffic on a specific port
+void startUdpListener()
+{
   udp.begin(localUdpPort); // begin listening on UDP port
   #if LOGGING
   Serial.printf("Now listening at IP %s, UDP port %d\n", WiFi.localIP().toString().c_str(), localUdpPort);

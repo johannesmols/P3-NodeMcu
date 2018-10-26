@@ -77,8 +77,7 @@ IR_CODE listenToIR();
 void changeColor(unsigned char color[3], boolean fade);
 void changeColor(unsigned char red, unsigned char green, unsigned char blue, boolean fade);
 // WiFi.ino
-void setupWiFi();
-//void discoverServer();
+void setupWiFiDynamic(bool resetSettings);
 /* ----- FUNCTION PROTOTYPES END ----- */
 
 void setup() 
@@ -90,7 +89,7 @@ void setup()
   SPI.begin(); // Initializing Serial Peripheral Interface to communicate with MFRC522
   mfrc522.PCD_Init(); // Initialize MFRC522
   
-  setupWiFi(); // WiFi initialization, blocks until connected
+  setupWiFiDynamic(false); // WiFi initialization, blocks until connected
   discoverServer(); // Discover server on the local network, blocks until found
   registerDevice(); // Register the device with the server
 
@@ -103,13 +102,18 @@ void loop()
   
   // Listen to commands sent by an IR remote directly on the device's IR sensor
   IR_CODE pressedButton = listenToIR();
-  switch (pressedButton)
+  if (pressedButton == PAUSE) // Start scanning for RFID tags
   {
-    case PAUSE:
-      #if LOGGING
-      Serial.println("Starting scan...");
-      #endif
-      vector<String> results = scanForTags(SCAN_TIMEOUT_S);
-      break;
+    #if LOGGING
+    Serial.println("Starting scan...");
+    #endif
+    vector<String> results = scanForTags(SCAN_TIMEOUT_S);
+  }
+  else if (pressedButton == FUNC_STOP) // Change the WiFi network
+  {
+    #if LOGGING
+    Serial.println("Resetting WiFi Connection");
+    #endif
+    setupWiFiDynamic(true);
   }
 }
