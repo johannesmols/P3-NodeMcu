@@ -11,10 +11,6 @@
 #include <ESP8266HTTPClient.h>  // HTTP Client
 #include <ArduinoJson.h>        // JSON Library - use version 5.13.2, version 6 has code breaking changes
 
-// Wi-Fi Credentials for static connection
-const char WIFI_SSID[] = "network";
-const char WIFI_PASSWORD[] = "password";
-
 // UDP variables
 WiFiUDP udp;
 unsigned int localUdpPort = 8080;
