@@ -3,10 +3,6 @@
  * Created:   28.09.2018
  **/
 
-#include <IRremoteESP8266.h> // https://github.com/markszabo/IRremoteESP8266
-#include <IRrecv.h> // https://github.com/markszabo/IRremoteESP8266
-#include <IRutils.h> // https://github.com/markszabo/IRremoteESP8266
-
 #define IR_PIN D1 // IR (Infrared) Receiver Pin
 
 IRrecv irrecv(IR_PIN); // Instantiate IR receiver pin

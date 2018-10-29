@@ -11,19 +11,37 @@
   * Green = Ready, waiting for input
   * Blue = Scanning mode (RFID tags)
   * Purple = Adding mode (RFID tags)
+  * Pink = Sending Data to the Server
   */
 
-#include <SPI.h> // https://www.arduino.cc/en/Reference/SPI
-#include <MFRC522.h> // https://github.com/miguelbalboa/rfid
+// RFID
+#include <SPI.h>                // https://www.arduino.cc/en/Reference/SPI
+#include <MFRC522.h>            // https://github.com/miguelbalboa/rfid
+
+// WiFi
+#include <ESP8266WiFi.h>        // WiFi library
+#include <DNSServer.h>          // DNS Server
+#include <ESP8266WebServer.h>   // Web Server
+#include <WiFiManager.h>        // Prompt User to Connect to WiFi: https://github.com/tzapu/WiFiManager
+#include <WiFiUdp.h>            // UPD functionality
+#include <ESP8266HTTPClient.h>  // HTTP Client
+
+// IR Receiver
+#include <IRremoteESP8266.h>    // https://github.com/markszabo/IRremoteESP8266
+#include <IRrecv.h>             // https://github.com/markszabo/IRremoteESP8266
+#include <IRutils.h>            // https://github.com/markszabo/IRremoteESP8266
+
+// Other
+#include <ArduinoJson.h>        // JSON Library - use version 5.13.2, version 6 has code breaking changes
 
 #define LOGGING true          // Enable or Disable output via Serial
 #define BUZZER true           // Enable or Disable sounds of buzzer when scanning tags
 #define PAUSE_TIME_MS 50      // Pause time in milliseconds that processes like the RFID Reader or IR Scanner should take between loops to save resources
 #define SCAN_TIMEOUT_S 15     // Time in seconds for timeout after the last scanned tag
-#define LED_FADING_TIME 5    // Incremental fading time steps in milliseconds
+#define LED_FADING_TIME 5     // Incremental fading time steps in milliseconds
 
-#define SS_PIN D8   // SPI - Slave Select Pin
-#define RST_PIN D2  // SPI - Reset Pin - not actually connected
+#define SS_PIN D8             // SPI - Slave Select Pin
+#define RST_PIN D2            // SPI - Reset Pin - not actually connected
 
 using namespace std;
 
@@ -108,6 +126,8 @@ void loop()
     Serial.println("Starting scan...");
     #endif
     vector<String> results = scanForTags(SCAN_TIMEOUT_S);
+    String jsonToSend = parseReadTagsToJson(results);
+    sendScannedTags(jsonToSend);
   }
   else if (pressedButton == FUNC_STOP) // Change the WiFi network
   {

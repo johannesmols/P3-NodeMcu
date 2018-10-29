@@ -3,14 +3,6 @@
  * Created:   08.10.2018
  **/
 
-#include <ESP8266WiFi.h>        // WiFi library
-#include <DNSServer.h>          // DNS Server
-#include <ESP8266WebServer.h>   // Web Server
-#include <WiFiManager.h>        // Prompt User to Connect to WiFi: https://github.com/tzapu/WiFiManager
-#include <WiFiUdp.h>            // UPD functionality
-#include <ESP8266HTTPClient.h>  // HTTP Client
-#include <ArduinoJson.h>        // JSON Library - use version 5.13.2, version 6 has code breaking changes
-
 // UDP variables
 WiFiUDP udp;
 unsigned int localUdpPort = 8080;
@@ -153,29 +145,10 @@ void registerDevice()
   changeColor(YELLOW, false); // Change status color of RGB LED back to yellow
 }
 
-// Convert a list of types and values to a Json String
-String convertValuesToJson(vector<String> types, vector<String> values)
+// Send the ID's of the scanned tag over the local network to the server via TCP in JSON format
+void sendScannedTags(String jsonString) 
 {
-  if (types.size() != values.size()) // Vector sizes have to match up for a valid JSON String
-  {
-    Serial.println("[Error] Number of types and values don't match");
-    return "";
-  }
-
-  int numberOfElements = types.size() + values.size();
-  const size_t bufferSize = JSON_ARRAY_SIZE(numberOfElements) + 128; // size of dynamic buffer
-  DynamicJsonBuffer jsonBuffer(bufferSize);
-
-  JsonObject& root = jsonBuffer.createObject();
-  for (int i = 0; i < types.size(); i++)
-  {
-    root[types[i]] = values[i]; // add values to the JSON Object
-  }
-
-  char jsonMessageBuffer[bufferSize];
-  root.printTo(jsonMessageBuffer, sizeof(jsonMessageBuffer)); // print Json as a char array
-
-  return (String) jsonMessageBuffer; // return the JSON as a String
+  Serial.println(jsonString);
 }
 
 // Decode the JSON string returned by the server upon registering the device, and store the ID to a variable

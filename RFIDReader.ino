@@ -82,8 +82,14 @@ vector<String> scanForTags(int timeoutInSeconds)
 
     delay(PAUSE_TIME_MS); // Small delay to avoid taking all processing power from the WiFi processes
   }
-  
+
+  #if LOGGING
   Serial.println("RFID Scan Complete");
+  if (!foundTags.size() > 0)
+  {
+    Serial.println("No tags found");
+  }
+  #endif
 
   // Change LED Status color back to normal
   changeColor(GREEN, false);
