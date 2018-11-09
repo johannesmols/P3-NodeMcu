@@ -32,14 +32,21 @@ String parseReadTagsToJson(vector<String> tags)
   JsonObject& root = jsonBuffer.createObject();
 
   // Probably add some other stuff before tags - will see when the server side is implemented
-  root["mac"] = WiFi.macAddress();
+  root["mac_address"] = WiFi.macAddress();
 
-  // Nested array for tag ID's
-  JsonArray& tagsArray = root.createNestedArray("tags");
-  for (int i = 0; i < tags.size(); i++)
+  // Determine whether the vector contains multiple tags. If not, don't add an array to the Json but just a single variable
+  if (tags.size() > 1) 
   {
-    tagsArray.add(tags[i]);
+    // Nested array for tag ID's
+    JsonArray& tagsArray = root.createNestedArray("tags");
+    for (int i = 0; i < tags.size(); i++)
+    {
+      tagsArray.add(tags[i]);
+    }
+  } else {
+    root["tag"] = tags[0];
   }
+  
 
   char jsonMessageBuffer[bufferSize];
   root.printTo(jsonMessageBuffer, sizeof(jsonMessageBuffer)); // print Json as a char array

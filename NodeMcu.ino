@@ -129,6 +129,21 @@ void loop()
     String jsonToSend = parseReadTagsToJson(results);
     sendScannedTags(jsonToSend);
   }
+  else if (pressedButton == VOL_PLUS) // Add a single tag
+  {
+    #if LOGGING
+    Serial.println("Starting scan for single tag...");
+    #endif
+    String tag = scanForTag(SCAN_TIMEOUT_S);
+    String emptyString = "";
+    if (tag != "") // Only continue if a tag was scanned
+    {
+      vector<String> toConvert;
+      toConvert.push_back(tag);
+      String jsonToSend = parseReadTagsToJson(toConvert);
+      sendAddTagRequest(jsonToSend);
+    }
+  }
   else if (pressedButton == FUNC_STOP) // Change the WiFi network
   {
     #if LOGGING

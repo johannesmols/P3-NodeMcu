@@ -145,10 +145,54 @@ void registerDevice()
   changeColor(YELLOW, false); // Change status color of RGB LED back to yellow
 }
 
-// Send the ID's of the scanned tag over the local network to the server via TCP in JSON format
+// Send the ID's of the scanned tag over the local network to the server via the HTTP API in JSON format
 void sendScannedTags(String jsonString) 
 {
-  Serial.println(jsonString);
+  String host = "http://" + (String) serverIp.toString().c_str() + ":" + (String) serverPort + "/api/scan";
+
+  #if LOGGING
+  Serial.println("[HTTP] Sending scan result POST request to server: " + host);
+  Serial.println("[HTTP] Sent Data: " + jsonString);
+  #endif
+
+  // Create HTTP client and create request
+  HTTPClient http;
+  http.begin(host);
+  http.addHeader("Content-Type", "application/json");
+
+  // Post request to the server and fetch response
+  int httpCode = http.POST(jsonString);
+  String response = http.getString();
+
+  #if LOGGING
+  Serial.println("[HTTP] Response Code: " + (String) httpCode);
+  Serial.println("[HTTP] Request Response: " + response);
+  #endif
+}
+
+// Send the ID of the scanned tag to the server, requesting to add this tag to the database
+void sendAddTagRequest(String jsonString)
+{
+  String host = "http://" + (String) serverIp.toString().c_str() + ":" + (String) serverPort + "/api/scan/new";
+
+  #if LOGGING
+  Serial.println("[HTTP] Sending POST request to add a single tag to server: " + host);
+  Serial.println("[HTTP] Sent Data: " + jsonString);
+  #endif
+
+  // Create HTTP client and create request
+  HTTPClient http;
+  http.begin(host);
+  http.addHeader("Content-Type", "application/json");
+
+  // Post request to the server and fetch response
+  int httpCode = http.POST(jsonString);
+  String response = http.getString();
+
+  #if LOGGING
+  Serial.println("[HTTP] Response Code: " + (String) httpCode);
+  Serial.println("[HTTP] Request Response: " + response);
+  #endif
 }
 
 // Decode the JSON string returned by the server upon registering the device, and store the ID to a variable

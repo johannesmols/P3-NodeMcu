@@ -21,6 +21,49 @@ vector<byte> readTag()
   return uid;
 }
 
+// Scan for a single RFID tag in proximity and return it's UID as a String
+String scanForTag(int timeoutInSeconds)
+{
+  // Change LED Status color
+  changeColor(BLUE, false);
+
+  vector<byte> newUid = readTag();
+  unsigned long timeSinceScanStarted = millis();
+  while (newUid.size() <= 0) 
+  {
+    delay(PAUSE_TIME_MS); // Small delay to avoid taking all processing power from the WiFi processes
+    if (millis() - timeSinceScanStarted > timeoutInSeconds * 1000) // stop scanning if the time limit is reached
+    {
+      #if LOGGING
+      Serial.println("Time ran out. Returning to normal operation mode.");
+      #endif
+      return "";
+    }
+    newUid = readTag();
+  }
+
+  String uid;
+  // Convert byte vector to String
+  for (byte tmp : newUid)
+  {
+    uid += tmp < 0x10 ? "0" + String(tmp, HEX) : String(tmp, HEX); // Write bytes in 2-char pairs as hexadecimal numbers
+  }
+  uid.toUpperCase();
+
+  #if LOGGING
+  Serial.println("Found Tag: " + uid);
+  #endif
+
+  #if BUZZER
+  buzzer(250, 250); // Play a short, high pitched sound to show acceptance
+  #endif
+
+  // Change LED Status color back to normal
+  changeColor(GREEN, false);
+
+  return uid;
+}
+
 // Scan for RFID tags in proximity and return a vector of UID's of the found RFID tags
 vector<String> scanForTags(int timeoutInSeconds)
 {
