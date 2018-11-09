@@ -126,7 +126,7 @@ void loop()
     Serial.println("Starting scan...");
     #endif
     vector<String> results = scanForTags(SCAN_TIMEOUT_S);
-    String jsonToSend = parseReadTagsToJson(results);
+    String jsonToSend = parseReadTagsToJson(results, false);
     sendScannedTags(jsonToSend);
   }
   else if (pressedButton == VOL_PLUS) // Add a single tag
@@ -140,7 +140,7 @@ void loop()
     {
       vector<String> toConvert;
       toConvert.push_back(tag);
-      String jsonToSend = parseReadTagsToJson(toConvert);
+      String jsonToSend = parseReadTagsToJson(toConvert, true);
       sendAddTagRequest(jsonToSend);
     }
   }

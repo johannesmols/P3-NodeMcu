@@ -24,7 +24,7 @@ String convertValuesToJson(vector<String> types, vector<String> values)
 }
 
 // Parse a list of tag ID's into a JSON format to be sent to the server for processing
-String parseReadTagsToJson(vector<String> tags)
+String parseReadTagsToJson(vector<String> tags, boolean singleItem)
 {
   const size_t bufferSize = JSON_ARRAY_SIZE(tags.size()) + 128; // size of dynamic buffer
   DynamicJsonBuffer jsonBuffer(bufferSize);
@@ -44,10 +44,21 @@ String parseReadTagsToJson(vector<String> tags)
       tagsArray.add(tags[i]);
     }
   } else {
-    root["tag"] = tags[0];
+    if (singleItem) // Don't create an array if the purpose is to add an item, which requires this to be single object and not an array
+    {
+      root["tag"] = tags[0];
+    }
+    else
+    {
+      // Nested array for tag ID's
+    JsonArray& tagsArray = root.createNestedArray("tags");
+    for (int i = 0; i < tags.size(); i++)
+    {
+      tagsArray.add(tags[i]);
+    }
+    }
   }
   
-
   char jsonMessageBuffer[bufferSize];
   root.printTo(jsonMessageBuffer, sizeof(jsonMessageBuffer)); // print Json as a char array
 
