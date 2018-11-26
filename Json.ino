@@ -1,3 +1,8 @@
+/**
+ * Author:    Johannes Mols
+ * Created:   28.09.2018
+ **/
+
 // Convert a list of types and values to a Json String
 String convertValuesToJson(vector<String> types, vector<String> values)
 {
@@ -24,15 +29,19 @@ String convertValuesToJson(vector<String> types, vector<String> values)
 }
 
 // Parse a list of tag ID's into a JSON format to be sent to the server for processing
-String parseReadTagsToJson(vector<String> tags, boolean singleItem)
+String parseReadTagsToJson(vector<String> tags, boolean singleItem, int category)
 {
   const size_t bufferSize = JSON_ARRAY_SIZE(tags.size()) + 128; // size of dynamic buffer
   DynamicJsonBuffer jsonBuffer(bufferSize);
 
   JsonObject& root = jsonBuffer.createObject();
 
-  // Probably add some other stuff before tags - will see when the server side is implemented
   root["mac_address"] = WiFi.macAddress();
+
+  // Add the category number to the request
+  if (!singleItem) {
+    root["category"] = category;
+  }
 
   // Determine whether the vector contains multiple tags. If not, don't add an array to the Json but just a single variable
   if (tags.size() > 1) 

@@ -148,6 +148,8 @@ void registerDevice()
 // Send the ID's of the scanned tag over the local network to the server via the HTTP API in JSON format
 void sendScannedTags(String jsonString) 
 {
+  changeColor(PINK, false);
+  
   String host = "http://" + (String) serverIp.toString().c_str() + ":" + (String) serverPort + "/api/scan";
 
   #if LOGGING
@@ -168,11 +170,15 @@ void sendScannedTags(String jsonString)
   Serial.println("[HTTP] Response Code: " + (String) httpCode);
   Serial.println("[HTTP] Request Response: " + response);
   #endif
+
+  changeColor(GREEN, false);
 }
 
 // Send the ID of the scanned tag to the server, requesting to add this tag to the database
 void sendAddTagRequest(String jsonString)
 {
+  changeColor(PINK, false);
+  
   String host = "http://" + (String) serverIp.toString().c_str() + ":" + (String) serverPort + "/api/scan/new";
 
   #if LOGGING
@@ -193,6 +199,8 @@ void sendAddTagRequest(String jsonString)
   Serial.println("[HTTP] Response Code: " + (String) httpCode);
   Serial.println("[HTTP] Request Response: " + response);
   #endif
+
+  changeColor(GREEN, false);
 }
 
 // Decode the JSON string returned by the server upon registering the device, and store the ID to a variable

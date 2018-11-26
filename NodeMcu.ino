@@ -10,7 +10,6 @@
   * Red = Error
   * Green = Ready, waiting for input
   * Blue = Scanning mode (RFID tags)
-  * Purple = Adding mode (RFID tags)
   * Pink = Sending Data to the Server
   */
 
@@ -34,14 +33,14 @@
 // Other
 #include <ArduinoJson.h>        // JSON Library - use version 5.13.2, version 6 has code breaking changes
 
-#define LOGGING true          // Enable or Disable output via Serial
-#define BUZZER true           // Enable or Disable sounds of buzzer when scanning tags
-#define PAUSE_TIME_MS 50      // Pause time in milliseconds that processes like the RFID Reader or IR Scanner should take between loops to save resources
-#define SCAN_TIMEOUT_S 15     // Time in seconds for timeout after the last scanned tag
-#define LED_FADING_TIME 5     // Incremental fading time steps in milliseconds
+#define LOGGING true            // Enable or Disable output via Serial
+#define BUZZER true             // Enable or Disable sounds of buzzer when scanning tags
+#define PAUSE_TIME_MS 50        // Pause time in milliseconds that processes like the RFID Reader or IR Scanner should take between loops to save resources
+#define SCAN_TIMEOUT_S 15       // Time in seconds for timeout after the last scanned tag
+#define LED_FADING_TIME 5       // Incremental fading time steps in milliseconds
 
-#define SS_PIN D8             // SPI - Slave Select Pin
-#define RST_PIN D2            // SPI - Reset Pin - not actually connected
+#define SS_PIN D8               // SPI - Slave Select Pin
+#define RST_PIN D2              // SPI - Reset Pin - not actually connected
 
 using namespace std;
 
@@ -116,18 +115,47 @@ void setup()
 
 void loop() 
 {
-  // Listen to incoming network packets (e.g. commands to scan, ...)
-  
   // Listen to commands sent by an IR remote directly on the device's IR sensor
   IR_CODE pressedButton = listenToIR();
-  if (pressedButton == PAUSE) // Start scanning for RFID tags
+  if (pressedButton == NUM_0) // Start scanning for RFID tags with specific group number
   {
-    #if LOGGING
-    Serial.println("Starting scan...");
-    #endif
-    vector<String> results = scanForTags(SCAN_TIMEOUT_S);
-    String jsonToSend = parseReadTagsToJson(results, false);
-    sendScannedTags(jsonToSend);
+    scanForTagsAndSendRequest(0);
+  }
+  else if (pressedButton == NUM_1)
+  {
+    scanForTagsAndSendRequest(1);
+  }
+  else if (pressedButton == NUM_2)
+  {
+    scanForTagsAndSendRequest(2);
+  }
+  else if (pressedButton == NUM_3)
+  {
+    scanForTagsAndSendRequest(3);
+  }
+  else if (pressedButton == NUM_4)
+  {
+    scanForTagsAndSendRequest(4);
+  }
+  else if (pressedButton == NUM_5)
+  {
+    scanForTagsAndSendRequest(5);
+  }
+  else if (pressedButton == NUM_6)
+  {
+    scanForTagsAndSendRequest(6);
+  }
+  else if (pressedButton == NUM_7)
+  {
+    scanForTagsAndSendRequest(7);
+  }
+  else if (pressedButton == NUM_8)
+  {
+    scanForTagsAndSendRequest(8);
+  }
+  else if (pressedButton == NUM_9)
+  {
+    scanForTagsAndSendRequest(9);
   }
   else if (pressedButton == VOL_PLUS) // Add a single tag
   {
@@ -140,7 +168,7 @@ void loop()
     {
       vector<String> toConvert;
       toConvert.push_back(tag);
-      String jsonToSend = parseReadTagsToJson(toConvert, true);
+      String jsonToSend = parseReadTagsToJson(toConvert, true, -1);
       sendAddTagRequest(jsonToSend);
     }
   }
@@ -151,4 +179,14 @@ void loop()
     #endif
     setupWiFiDynamic(true);
   }
+}
+
+void scanForTagsAndSendRequest(int category) 
+{
+  #if LOGGING
+  Serial.println("Starting scan for group " + (String) category + "...");
+  #endif
+  vector<String> results = scanForTags(SCAN_TIMEOUT_S);
+  String jsonToSend = parseReadTagsToJson(results, false, category);
+  sendScannedTags(jsonToSend);
 }
