@@ -42,6 +42,9 @@ void setupWiFiDynamic(bool resetSettings)
 
   startUdpListener();
 
+  discoverServer(); // Discover server on the local network, blocks until found
+  registerDevice(); // Register the device with the server
+
   changeColor(GREEN, false); // indicate that WiFi setup was completed successfully
 }
 

@@ -107,8 +107,6 @@ void setup()
   mfrc522.PCD_Init(); // Initialize MFRC522
   
   setupWiFiDynamic(false); // WiFi initialization, blocks until connected
-  discoverServer(); // Discover server on the local network, blocks until found
-  registerDevice(); // Register the device with the server
 
   changeColor(GREEN, false); // initialization complete
 }
