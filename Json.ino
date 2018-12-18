@@ -52,7 +52,9 @@ String parseReadTagsToJson(vector<String> tags, boolean singleItem, int category
     {
       tagsArray.add(tags[i]);
     }
-  } else {
+  } 
+  else 
+  {
     if (singleItem) // Don't create an array if the purpose is to add an item, which requires this to be single object and not an array
     {
       root["tag"] = tags[0];
@@ -60,11 +62,11 @@ String parseReadTagsToJson(vector<String> tags, boolean singleItem, int category
     else
     {
       // Nested array for tag ID's
-    JsonArray& tagsArray = root.createNestedArray("tags");
-    for (int i = 0; i < tags.size(); i++)
-    {
-      tagsArray.add(tags[i]);
-    }
+      JsonArray& tagsArray = root.createNestedArray("tags");
+      for (int i = 0; i < tags.size(); i++)
+      {
+        tagsArray.add(tags[i]);
+      }
     }
   }
   

@@ -131,7 +131,7 @@ void registerDevice()
 
   // Prepare POST request by adding a message in JSON format
   vector<String> types, values;
-  types.push_back("device_type");
+  types.push_back("mac_address");
   values.push_back(WiFi.macAddress());
 
   // Post request to the server and fetch response
